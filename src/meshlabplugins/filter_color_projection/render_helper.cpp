@@ -217,7 +217,7 @@ void RenderHelper::renderScene(const Shotm &view, MeshModel *mesh, RenderingMode
     _far  = camFar;
   }
 
-  assert(_near <= _far);
+  assert(_near < _far);
 
   GLenum err = glGetError(); (void) err;
 
@@ -315,7 +315,7 @@ void RenderHelper::renderScene(const Shotm &view, MeshModel *mesh, RenderingMode
 
   err = glGetError();
 
-  glDisableClientState(GL_VERTEX_ARRAY);                // deactivate vertex array
+  // glDisableClientState(GL_VERTEX_ARRAY);                // deactivate vertex array
   if(use_colors) glDisableClientState(GL_COLOR_ARRAY);
   if(use_normals) glDisableClientState(GL_NORMAL_ARRAY);
 
@@ -334,8 +334,8 @@ void RenderHelper::renderScene(const Shotm &view, MeshModel *mesh, RenderingMode
 
   glFinish();
 
-  //QImage l=fbo.toImage();
-  //l.save("rendering.jpg");
+  // QImage l=fbo.toImage();
+  // l.save("rendering.jpg");
 
   fbo.release();
 }
