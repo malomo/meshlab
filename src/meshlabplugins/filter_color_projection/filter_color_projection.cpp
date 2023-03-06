@@ -321,7 +321,14 @@ std::map<std::string, QVariant> FilterColorProjectionPlugin::applyFilter(
 			tri::UpdatePosition<CMeshO>::Matrix(model->cm, model->cm.Tr, true);
 			tri::UpdateBounding<CMeshO>::Box(model->cm);
 
-			// making context current
+			// making plugin context current saving previous state
+			auto previousContext = QOpenGLContext::currentContext();
+			QSurface * previousSurface = nullptr;
+			if (previousContext != nullptr)
+			{
+				glPushAttrib(GL_ALL_ATTRIB_BITS);
+				previousSurface = previousContext->surface();
+			}
 			glContext->makeCurrent();
 
 			if (use_depth) {
@@ -339,9 +346,16 @@ std::map<std::string, QVariant> FilterColorProjectionPlugin::applyFilter(
 				// render depth
 				rendermanager->renderScene(raster->shot, model, RenderHelper::FLAT, glContext);
 			}
+			// use_depth = false;
 
 			// unmaking context current
 			glContext->doneCurrent();
+			if (previousContext != nullptr)
+			{
+				previousContext->makeCurrent(previousSurface);
+				glPopAttrib();
+				QOpenGLFramebufferObject::bindDefault();
+			}
 
 			qDebug(
 				"Viewport %i %i",
